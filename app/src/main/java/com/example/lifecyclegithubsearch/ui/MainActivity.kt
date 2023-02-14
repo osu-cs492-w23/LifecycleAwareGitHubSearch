@@ -31,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loadingIndicator: CircularProgressIndicator
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate()")
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -59,6 +61,31 @@ class MainActivity : AppCompatActivity() {
                 searchResultsListRV.scrollToPosition(0)
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart()")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume()")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause()")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop()")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy()")
     }
 
     /**
