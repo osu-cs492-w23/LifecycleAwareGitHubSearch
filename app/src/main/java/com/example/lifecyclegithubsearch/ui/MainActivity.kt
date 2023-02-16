@@ -106,52 +106,52 @@ class MainActivity : AppCompatActivity() {
          * Asynchronously send HTTP request to the GitHub API using the GitHubService Retrofit
          * service.
          */
-        gitHubService.searchRepositories(query)
-            .enqueue(object : Callback<GitHubSearchResults> {
-                /*
-                 * onResponse() is the callback executed when a response is received from the API.
-                 * The response may or may not indicate success.
-                 */
-                override fun onResponse(call: Call<GitHubSearchResults>, response: Response<GitHubSearchResults>) {
-                    Log.d(
-                        TAG,
-                        "Response received for query '$query', status code: ${response.code()}"
-                    )
-                    loadingIndicator.visibility = View.INVISIBLE
-                    if (response.isSuccessful) {
-                        /*
-                         * If response was successful, grab list of search results out of response
-                         * body and plug them into the RecyclerView adapter.  Show RecyclerView.
-                         */
-                        repoListAdapter.updateRepoList(response.body()?.items)
-                        searchResultsListRV.visibility = View.VISIBLE
-                    } else {
-                        /*
-                         * If response was not successful, display error message to user.
-                         */
-                        searchErrorTV.visibility = View.VISIBLE
-                        searchErrorTV.text = getString(
-                            R.string.search_error,
-                            response.errorBody()?.string() ?: "unknown error"
-                        )
-                    }
-                }
-
-                /*
-                 * onFailure() is called when an API call can't be executed (i.e. the request can't
-                 * be sent, or no response is received).
-                 */
-                override fun onFailure(call: Call<GitHubSearchResults>, t: Throwable) {
-                    /*
-                     * If an error occurred when executing the search query, display error message
-                     * to the user.
-                     */
-                    Log.d(TAG, "Error executing query '$query': ${t.message}")
-                    loadingIndicator.visibility = View.INVISIBLE
-                    searchErrorTV.visibility = View.VISIBLE
-                    searchErrorTV.text = getString(R.string.search_error, t.message)
-                }
-            })
+//        gitHubService.searchRepositories(query)
+//            .enqueue(object : Callback<GitHubSearchResults> {
+//                /*
+//                 * onResponse() is the callback executed when a response is received from the API.
+//                 * The response may or may not indicate success.
+//                 */
+//                override fun onResponse(call: Call<GitHubSearchResults>, response: Response<GitHubSearchResults>) {
+//                    Log.d(
+//                        TAG,
+//                        "Response received for query '$query', status code: ${response.code()}"
+//                    )
+//                    loadingIndicator.visibility = View.INVISIBLE
+//                    if (response.isSuccessful) {
+//                        /*
+//                         * If response was successful, grab list of search results out of response
+//                         * body and plug them into the RecyclerView adapter.  Show RecyclerView.
+//                         */
+//                        repoListAdapter.updateRepoList(response.body()?.items)
+//                        searchResultsListRV.visibility = View.VISIBLE
+//                    } else {
+//                        /*
+//                         * If response was not successful, display error message to user.
+//                         */
+//                        searchErrorTV.visibility = View.VISIBLE
+//                        searchErrorTV.text = getString(
+//                            R.string.search_error,
+//                            response.errorBody()?.string() ?: "unknown error"
+//                        )
+//                    }
+//                }
+//
+//                /*
+//                 * onFailure() is called when an API call can't be executed (i.e. the request can't
+//                 * be sent, or no response is received).
+//                 */
+//                override fun onFailure(call: Call<GitHubSearchResults>, t: Throwable) {
+//                    /*
+//                     * If an error occurred when executing the search query, display error message
+//                     * to the user.
+//                     */
+//                    Log.d(TAG, "Error executing query '$query': ${t.message}")
+//                    loadingIndicator.visibility = View.INVISIBLE
+//                    searchErrorTV.visibility = View.VISIBLE
+//                    searchErrorTV.text = getString(R.string.search_error, t.message)
+//                }
+//            })
     }
 
     /**
