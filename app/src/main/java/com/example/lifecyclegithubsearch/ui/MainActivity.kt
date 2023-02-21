@@ -9,12 +9,14 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lifecyclegithubsearch.R
 import com.example.lifecyclegithubsearch.api.GitHubService
 import com.example.lifecyclegithubsearch.data.GitHubRepo
 import com.example.lifecyclegithubsearch.data.GitHubSearchResults
+import com.example.lifecyclegithubsearch.data.LoadingStatus
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,8 +25,8 @@ import retrofit2.Response
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
-    private val gitHubService = GitHubService.create()
     private val repoListAdapter = GitHubRepoListAdapter(::onGitHubRepoClick)
+    private val viewModel: GitHubSearchViewModel by viewModels()
 
     private lateinit var searchResultsListRV: RecyclerView
     private lateinit var searchErrorTV: TextView
@@ -50,6 +52,40 @@ class MainActivity : AppCompatActivity() {
         searchResultsListRV.setHasFixedSize(true)
         searchResultsListRV.adapter = repoListAdapter
 
+        viewModel.searchResults.observe(this) { searchResults ->
+            repoListAdapter.updateRepoList(searchResults)
+        }
+
+        viewModel.loadingStatus.observe(this) { loadingStatus ->
+            when (loadingStatus) {
+                LoadingStatus.LOADING -> {
+                    loadingIndicator.visibility = View.VISIBLE
+                    searchResultsListRV.visibility = View.INVISIBLE
+                    searchErrorTV.visibility = View.INVISIBLE
+                }
+                LoadingStatus.ERROR -> {
+                    loadingIndicator.visibility = View.INVISIBLE
+                    searchResultsListRV.visibility = View.INVISIBLE
+                    searchErrorTV.visibility = View.VISIBLE
+                }
+                else -> {
+                    loadingIndicator.visibility = View.INVISIBLE
+                    searchResultsListRV.visibility = View.VISIBLE
+                    searchErrorTV.visibility = View.INVISIBLE
+                }
+            }
+        }
+
+        viewModel.errorMessage.observe(this) { errorMessage ->
+            if (errorMessage != null) {
+                Log.d(TAG, "Error making API call: $errorMessage")
+                searchErrorTV.text = getString(
+                    R.string.search_error,
+                    errorMessage
+                )
+            }
+        }
+
         /*
          * Attach click listener to "search" button to perform repository search with GitHub API
          * using the search query entered by the user.
@@ -57,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         searchBtn.setOnClickListener {
             val query = searchBoxET.text.toString()
             if (!TextUtils.isEmpty(query)) {
-                doRepoSearch(query)
+                viewModel.loadSearchResults(query)
                 searchResultsListRV.scrollToPosition(0)
             }
         }
